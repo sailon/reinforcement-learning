@@ -13,22 +13,25 @@ def Downsampler(number_of_dimensions):
     """ Downsample reduces the resolution of a given environment so that it is below the given threshold."""
 
     def handler(raw_input, resolution_threshold):
-        environmentResolution = DataSize(raw_input)
-        downsampledInput = raw_input.copy()
+        environment_resolution = DataSize(raw_input)
+        downsampled_input = raw_input.copy()
 
-        # Divide the difference bewteen the environmentResolution by the
+        # Divide the difference bewteen the environment_resolution by the
         # diff to know how much resolution needs to be downsampled.
-        diff = environmentResolution - resolution_threshold
-        differenceMultiple = np.ceil(environmentResolution / diff)
+        diff = environment_resolution - resolution_threshold
+        if diff <= 0:
+            return raw_input
+
+        difference_multiple = np.ceil(environment_resolution / diff)
 
         if number_of_dimensions == 1:
-            return downsampledInput[::differenceMultiple]
+            return downsampled_input[::difference_multiple]
         if number_of_dimensions == 2:
-            return downsampledInput[::,::differenceMultiple]
+            return downsampled_input[::,::difference_multiple]
         if number_of_dimensions == 3:
-            return downsampledInput[::,::,::differenceMultiple]
+            return downsampled_input[::,::,::difference_multiple]
         if number_of_dimensions == 4:
-            return downsampledInput[::,::,::,::differenceMultiple]
+            return downsampled_input[::,::,::,::difference_multiple]
         return raw_input
 
     return handler
@@ -39,9 +42,9 @@ def Echo(raw_input, resolution_threshold):
 
 def PreprocessFunction(raw_input, resolution_threshold):
     """ PreprocessFunction selects the appropriate function to pre-process the raw input to achieve a reasonable amount of input resolution."""
-    environmentResolution = DataSize(raw_input)
+    environment_resolution = DataSize(raw_input)
     
-    if environmentResolution > resolution_threshold:
+    if environment_resolution > resolution_threshold:
 
         numDimensions = len(DataShape(raw_input))
         if numDimensions == 1:
@@ -57,11 +60,11 @@ def PreprocessFunction(raw_input, resolution_threshold):
 
 
 def Reshape(input_data, desired_shape):
-    '''Reshape n-dimensional input_data into desired shape given as tuple'''
+    """ Reshape n-dimensional input_data into desired shape given as tuple""""
     return numpy.reshape(input_data, desired_shape)
 
 def FeedForward(neural_net, shaped_input):
-    '''Feed properly shaped input through neural net returning scalar output and hidden state'''
+    """ Feed properly shaped input through neural net returning scalar output and hidden state""""
     hidden_state = shaped_input.copy()
 
     # fully connected neural net
@@ -76,9 +79,9 @@ def FeedForward(neural_net, shaped_input):
     return y, hidden_state
 
 def CalculateAction(y):
-    '''Weighted toss of coin of weight y'''
+    """ Weighted toss of coin of weight y""""
     return random.uniform(0, 1) >= y
 
 def Sigmoid(y): 
-    '''Sigmoid "squashing" function to interval [0,1]'''
+    """ Sigmoid "squashing" function to interval [0,1]""""
     return 1.0 / (1.0 + np.exp(y))
