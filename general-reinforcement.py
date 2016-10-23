@@ -9,19 +9,29 @@ def DataSize(raw_input):
     """ DataSize takes in the raw input and returns the product of all dimensions"""
     return raw_input.size
 
-# TODO: rewrite to work for anything ever always
-def Downsample(raw_input, resolution_threshold):
+def Downsampler(number_of_dimensions):
     """ Downsample reduces the resolution of a given environment so that it is below the given threshold."""
 
-    environmentResolution = DataSize(raw_input)
-    downsampledInput = raw_input.copy()
+    def handler(raw_input, resolution_threshold):
+        environmentResolution = DataSize(raw_input)
+        downsampledInput = raw_input.copy()
 
-    # Divide the difference bewteen the environmentResolution by the
-    # diff to know how much resolution needs to be downsampled.
-    diff = environmentResolution - resolution_threshold
-    differenceMultiple = np.ceil(environmentResolution / diff)
+        # Divide the difference bewteen the environmentResolution by the
+        # diff to know how much resolution needs to be downsampled.
+        diff = environmentResolution - resolution_threshold
+        differenceMultiple = np.ceil(environmentResolution / diff)
 
-    return downsampledInput[::,::differenceMultiple]
+        if number_of_dimensions == 1:
+            return downsampledInput[::differenceMultiple]
+        if number_of_dimensions == 2:
+            return downsampledInput[::,::differenceMultiple]
+        if number_of_dimensions == 3:
+            return downsampledInput[::,::,::differenceMultiple]
+        if number_of_dimensions == 4:
+            return downsampledInput[::,::,::,::differenceMultiple]
+        return raw_input
+
+    return handler
 
 def Echo(raw_input, resolution_threshold):
     """ Echo returns the raw input unchanged"""
@@ -32,9 +42,19 @@ def PreprocessFunction(raw_input, resolution_threshold):
     environmentResolution = DataSize(raw_input)
     
     if environmentResolution > resolution_threshold:
-        return Downsample
-    
+
+        numDimensions = len(DataShape(raw_input))
+        if numDimensions == 1:
+            return Downsampler(1)
+        if numDimensions == 2:
+            return Downsampler(2)
+        if numDimensions == 3:
+            return Downsampler(3)
+        if numDimensions == 4:
+            return Downsampler(4)
+
     return Echo
+
 
 def Reshape(input_data, desired_shape):
     '''Reshape n-dimensional input_data into desired shape given as tuple'''
@@ -62,4 +82,3 @@ def CalculateAction(y):
 def Sigmoid(y): 
     '''Sigmoid "squashing" function to interval [0,1]'''
     return 1.0 / (1.0 + np.exp(y))
-
