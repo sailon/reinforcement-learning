@@ -60,11 +60,11 @@ def PreprocessFunction(raw_input, resolution_threshold):
 
 
 def Reshape(input_data, desired_shape):
-    """ Reshape n-dimensional input_data into desired shape given as tuple""""
+    """ Reshape n-dimensional input_data into desired shape given as tuple"""
     return numpy.reshape(input_data, desired_shape)
 
 def FeedForward(neural_net, shaped_input):
-    """ Feed properly shaped input through neural net returning scalar output and hidden state""""
+    """ Feed properly shaped input through neural net returning scalar output and hidden state"""
     hidden_state = shaped_input.copy()
 
     # fully connected neural net
@@ -79,9 +79,9 @@ def FeedForward(neural_net, shaped_input):
     return y, hidden_state
 
 def CalculateAction(y):
-    """ Weighted toss of coin of weight y""""
+    """ Weighted toss of coin of weight y"""
     return random.uniform(0, 1) >= y
 
 def Sigmoid(y): 
-    """ Sigmoid "squashing" function to interval [0,1]""""
+    """ Sigmoid "squashing" function to interval [0,1]"""
     return 1.0 / (1.0 + np.exp(y))
